@@ -116,20 +116,16 @@ public class WordleGame {
             this.word = word;
         }
 
-        public boolean isWin() { return win; }
-        public String getAnalysis() { return analysis; }
-        public String getWord() { return word; }
-    }
-}
+        public boolean isWin() {
+            return win;
+        }
 
-class WordleGameException extends Exception {
-    public WordleGameException(String message) {
-        super(message);
-    }
-}
+        public String getAnalysis() {
+            return analysis;
+        }
 
-class WordNotFoundInDictionaryException extends WordleGameException {
-    public WordNotFoundInDictionaryException(String message) {
-        super(message);
+        public String getWord() {
+            return word;
+        }
     }
 }
