@@ -7,7 +7,14 @@ public class WordleDictionary {
     private final Random random = new Random();
 
     public WordleDictionary(List<String> words) {
-        this.words = new ArrayList<>(words);
+        // Фильтруем только 5-буквенные слова при создании словаря
+        this.words = new ArrayList<>();
+        for (String word : words) {
+            String normalized = normalizeWord(word);
+            if (normalized.length() == 5) {
+                this.words.add(normalized);
+            }
+        }
     }
 
     public List<String> getWords() {
@@ -23,7 +30,7 @@ public class WordleDictionary {
 
     public boolean contains(String word) {
         String normalized = normalizeWord(word);
-        return words.contains(normalized) && normalized.length() == 5;
+        return words.contains(normalized);
     }
 
     public List<String> findPossibleWords(Set<Character> correctLetters,
@@ -64,7 +71,7 @@ public class WordleDictionary {
         for (Map.Entry<Integer, Character> entry : correctPositions.entrySet()) {
             int position = entry.getKey();
             char expectedChar = entry.getValue();
-            if (word.charAt(position) != expectedChar) {
+            if (position < word.length() && word.charAt(position) != expectedChar) {
                 return false;
             }
         }
@@ -73,7 +80,7 @@ public class WordleDictionary {
         for (Map.Entry<Integer, Set<Character>> entry : wrongPositions.entrySet()) {
             int position = entry.getKey();
             Set<Character> forbiddenChars = entry.getValue();
-            if (forbiddenChars.contains(word.charAt(position))) {
+            if (position < word.length() && forbiddenChars.contains(word.charAt(position))) {
                 return false;
             }
         }
@@ -82,6 +89,7 @@ public class WordleDictionary {
     }
 
     private static String normalizeWord(String word) {
+        if (word == null) return "";
         return word.toLowerCase().replace('ё', 'е');
     }
 
