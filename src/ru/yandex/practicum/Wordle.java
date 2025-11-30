@@ -58,16 +58,16 @@ public class Wordle {
                     System.out.println("> " + result.getAnalysis());
                     
                     if (result.isWin()) {
-                        System.out.println("\n🎉 Поздравляем! Вы угадали слово!");
+                        System.out.println("\n Поздравляем! Вы угадали слово!");
                         logWriter.println("Пользователь выиграл, слово: " + result.getWord());
                         break;
                     }
                     
                 } catch (WordNotFoundInDictionaryException e) {
-                    System.out.println("❌ " + e.getMessage());
+                    System.out.println("X " + e.getMessage());
                     logWriter.println("Пользователь ввел слово не из словаря: " + input);
                 } catch (WordleGameException e) {
-                    System.out.println("❌ " + e.getMessage());
+                    System.out.println("X " + e.getMessage());
                     logWriter.println("Ошибка игры: " + e.getMessage());
                 }
             }
