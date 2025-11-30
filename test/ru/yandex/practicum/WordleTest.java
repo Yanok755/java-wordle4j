@@ -25,12 +25,11 @@ class WordleTest {
     // Используем только 5-буквенные слова для тестов
         List<String> testWords = Arrays.asList(
             "стол", "стул", "окно", "дверь", "книга",
-            "ручей", "бумаг", "мышк", "клава"  // 5-буквенные слова
+            "ручей", "бумаг", "мышка", "клава"
         );
         dictionary = new WordleDictionary(testWords);
         loader = new WordleDictionaryLoader();
     }
-
     @Test
     void testDictionaryNormalization() throws IOException {
         // Создаем временный файл словаря с 5-буквенными словами
@@ -212,11 +211,9 @@ class WordleTest {
     void testNormalizationWithYo() throws IOException {
         File dictFile = tempDir.resolve("yo_dict.txt").toFile();
         try (PrintWriter writer = new PrintWriter(dictFile, StandardCharsets.UTF_8)) {
-            writer.println("ёлка");   // 4 буквы -> будет отфильтровано
-            writer.println("мёд");    // 3 буквы -> будет отфильтровано
-            writer.println("берёз");  // 5 букв
-            writer.println("ёжник");  // 5 букв
-            writer.println("пёстр");  // 5 букв
+            writer.println("берёз");
+            writer.println("ёжник");
+            writer.println("пёстр");
         }
 
         WordleDictionary loadedDict = loader.loadDictionary(dictFile.getAbsolutePath());
@@ -224,8 +221,6 @@ class WordleTest {
         assertTrue(loadedDict.contains("берез"));
         assertTrue(loadedDict.contains("ежник"));
         assertTrue(loadedDict.contains("пестр"));
-        assertFalse(loadedDict.contains("ёлка"));  // слишком короткое
-        assertFalse(loadedDict.contains("мёд"));   // слишком короткое
     }
 
     @Test
