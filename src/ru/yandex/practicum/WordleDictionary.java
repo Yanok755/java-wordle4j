@@ -22,7 +22,8 @@ public class WordleDictionary {
     }
 
     public boolean contains(String word) {
-        return words.contains(normalizeWord(word));
+        String normalized = normalizeWord(word);
+        return words.contains(normalized) && normalized.length() == 5;
     }
 
     public List<String> findPossibleWords(Set<Character> correctLetters,
@@ -85,15 +86,18 @@ public class WordleDictionary {
     }
 
     public static String analyzeWord(String guess, String answer) {
-        if (guess.length() != 5 || answer.length() != 5) {
+        String normalizedGuess = normalizeWord(guess);
+        String normalizedAnswer = normalizeWord(answer);
+    
+        if (normalizedGuess.length() != 5 || normalizedAnswer.length() != 5) {
             throw new IllegalArgumentException("Слова должны быть длиной 5 букв");
         }
 
         char[] result = new char[5];
-        char[] guessChars = guess.toCharArray();
-        char[] answerChars = answer.toCharArray();
+        char[] guessChars = normalizedGuess.toCharArray();
+        char[] answerChars = normalizedAnswer.toCharArray();
 
-        // Сначала отмечаем правильные позиции
+    // Сначала отмечаем правильные позиции
         for (int i = 0; i < 5; i++) {
             if (guessChars[i] == answerChars[i]) {
                 result[i] = '+';
@@ -101,7 +105,7 @@ public class WordleDictionary {
             }
         }
 
-        // Затем отмечаем буквы в неправильных позициях
+    // Затем отмечаем буквы в неправильных позициях
         for (int i = 0; i < 5; i++) {
             if (result[i] == '+') continue;
 
@@ -121,5 +125,9 @@ public class WordleDictionary {
         }
 
         return new String(result);
+    }
+
+    private static String normalizeWord(String word) {
+        return word.toLowerCase().replace('ё', 'е');
     }
 }
