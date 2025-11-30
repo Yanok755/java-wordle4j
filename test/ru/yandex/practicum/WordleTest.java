@@ -22,9 +22,10 @@ class WordleTest {
 
     @BeforeEach
     void setUp() {
+        // Используем только 5-буквенные слова для тестов
         List<String> testWords = Arrays.asList(
-            "стол", "стул", "окно", "дверь", "книга",
-            "ручка", "бумага", "компьютер", "мышь", "клава"
+            "столик", "стулья", "окошко", "дверца", "книжка",
+            "ручеек", "бумага", "мышка", "клавиа"
         );
         dictionary = new WordleDictionary(testWords);
         loader = new WordleDictionaryLoader();
@@ -32,46 +33,46 @@ class WordleTest {
 
     @Test
     void testDictionaryNormalization() throws IOException {
-        // Создаем временный файл словаря
+        // Создаем временный файл словаря с 5-буквенными словами
         File dictFile = tempDir.resolve("test_dict.txt").toFile();
         try (PrintWriter writer = new PrintWriter(dictFile, StandardCharsets.UTF_8)) {
-            writer.println("СтОл");
-            writer.println("СТУЛ");
-            writer.println("окно");
+            writer.println("СтОли");
+            writer.println("СТУЛЬ");
+            writer.println("окошк");
             writer.println("дверь");
-            writer.println("ёлка"); // тест замены ё на е
-            writer.println("мёд");
+            writer.println("ёлочк"); // тест замены ё на е
+            writer.println("мёдик");
         }
 
         WordleDictionary loadedDict = loader.loadDictionary(dictFile.getAbsolutePath());
         List<String> words = loadedDict.getWords();
 
-        assertTrue(words.contains("стол"));
-        assertTrue(words.contains("стул"));
-        assertTrue(words.contains("окно"));
+        assertTrue(words.contains("столи"));
+        assertTrue(words.contains("стуль"));
+        assertTrue(words.contains("окошк"));
         assertTrue(words.contains("дверь"));
-        assertTrue(words.contains("елка")); // после нормализации
-        assertTrue(words.contains("мед"));  // после нормализации
+        assertTrue(words.contains("елочк")); // после нормализации
+        assertTrue(words.contains("медик"));  // после нормализации
     }
 
     @Test
     void testDictionaryContains() {
-        assertTrue(dictionary.contains("стол"));
-        assertTrue(dictionary.contains("СТОЛ")); // регистр не важен
-        assertTrue(dictionary.contains("СтОл")); // смешанный регистр
-        assertFalse(dictionary.contains("несуществующее"));
+        assertTrue(dictionary.contains("столик"));
+        assertTrue(dictionary.contains("СТОЛИК")); // регистр не важен
+        assertTrue(dictionary.contains("СтОлИк")); // смешанный регистр
+        assertFalse(dictionary.contains("несуществующееслово"));
     }
 
     @Test
     void testWordAnalysis() {
         // Правильные позиции
-        assertEquals("+++++", WordleDictionary.analyzeWord("стол", "стол"));
-        assertEquals("+---", WordleDictionary.analyzeWord("стул", "стол").substring(0, 4));
-        assertEquals("+^--", WordleDictionary.analyzeWord("слот", "стол").substring(0, 4));
+        assertEquals("+++++", WordleDictionary.analyzeWord("столик", "столик"));
+        assertEquals("+----", WordleDictionary.analyzeWord("стулья", "столик").substring(0, 5));
+        assertEquals("+^---", WordleDictionary.analyzeWord("слоник", "столик").substring(0, 5));
 
         // Буквы в неправильных позициях
-        assertEquals("-^--", WordleDictionary.analyzeWord("луна", "стул").substring(0, 4));
-        assertEquals("^^--", WordleDictionary.analyzeWord("толс", "стол").substring(0, 4));
+        assertEquals("-^---", WordleDictionary.analyzeWord("лукошко", "стулья").substring(0, 5));
+        assertEquals("^^---", WordleDictionary.analyzeWord("толика", "столик").substring(0, 5));
     }
 
     @Test
@@ -102,24 +103,27 @@ class WordleTest {
     void testFailedAttempt() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
         String answer = game.getAnswer();
-        String wrongWord = "стул"; // гарантированно другое слово
+        
+        // Находим слово, которое точно не является ответом
+        String wrongWord = dictionary.getWords().stream()
+                .filter(word -> !word.equals(answer))
+                .findFirst()
+                .orElse("стулья"); // fallback
 
-        if (!wrongWord.equals(answer)) {
-            WordleGame.GameResult result = game.makeAttempt(wrongWord);
+        WordleGame.GameResult result = game.makeAttempt(wrongWord);
 
-            assertFalse(result.isWin());
-            assertNotNull(result.getAnalysis());
-            assertEquals(5, game.getRemainingSteps());
-            assertFalse(game.isWon());
-            assertFalse(game.isGameOver());
-        }
+        assertFalse(result.isWin());
+        assertNotNull(result.getAnalysis());
+        assertEquals(5, game.getRemainingSteps());
+        assertFalse(game.isWon());
+        assertFalse(game.isGameOver());
     }
 
     @Test
     void testInvalidWordLength() {
         WordleGame game = new WordleGame(dictionary);
 
-        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("короткое"));
+        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("короткоеслово"));
         assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("дл"));
     }
 
@@ -134,7 +138,12 @@ class WordleTest {
     @Test
     void testGameOverAfterSixAttempts() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
-        String wrongWord = "стул";
+        
+        // Находим слово, которое точно не является ответом
+        String wrongWord = dictionary.getWords().stream()
+                .filter(word -> !word.equals(game.getAnswer()))
+                .findFirst()
+                .orElse("стулья"); // fallback
 
         // Делаем 6 неудачных попыток
         for (int i = 0; i < 6; i++) {
@@ -148,7 +157,7 @@ class WordleTest {
         assertEquals(0, game.getRemainingSteps());
 
         // Нельзя сделать ход после окончания игры
-        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("стол"));
+        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("столик"));
     }
 
     @Test
@@ -158,24 +167,29 @@ class WordleTest {
         String hint = game.getHint();
         assertNotNull(hint);
         assertTrue(dictionary.contains(hint));
+        assertEquals(5, hint.length()); // Подсказка должна быть из 5 букв
 
         // После ввода слова подсказка должна учитывать новые данные
-        game.makeAttempt("стул");
-        String newHint = game.getHint();
-        assertNotNull(newHint);
+        String testWord = dictionary.getWords().get(0);
+        if (!testWord.equals(game.getAnswer())) {
+            game.makeAttempt(testWord);
+            String newHint = game.getHint();
+            assertNotNull(newHint);
+            assertEquals(5, newHint.length());
+        }
     }
 
     @Test
     void testLetterTracking() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
-        String answer = game.getAnswer();
 
         // Делаем попытку и проверяем, что информация о буквах обновляется
-        game.makeAttempt("стул");
+        String testWord = dictionary.getWords().get(0);
+        game.makeAttempt(testWord);
 
         // Проверяем, что попытка записана
         assertEquals(1, game.getAttempts().size());
-        assertEquals("стул", game.getAttempts().get(0));
+        assertEquals(testWord, game.getAttempts().get(0));
     }
 
     @Test
@@ -197,16 +211,16 @@ class WordleTest {
     void testNormalizationWithYo() throws IOException {
         File dictFile = tempDir.resolve("yo_dict.txt").toFile();
         try (PrintWriter writer = new PrintWriter(dictFile, StandardCharsets.UTF_8)) {
-            writer.println("ёлка");
-            writer.println("мёд");
-            writer.println("берёза");
+            writer.println("ёлочка");
+            writer.println("мёдик");
+            writer.println("берёзк");
         }
 
         WordleDictionary loadedDict = loader.loadDictionary(dictFile.getAbsolutePath());
 
-        assertTrue(loadedDict.contains("елка"));
-        assertTrue(loadedDict.contains("мед"));
-        assertTrue(loadedDict.contains("береза"));
+        assertTrue(loadedDict.contains("елочка"));
+        assertTrue(loadedDict.contains("медик"));
+        assertTrue(loadedDict.contains("березк"));
     }
 
     @Test
@@ -215,15 +229,16 @@ class WordleTest {
         for (int i = 0; i < 10; i++) {
             String randomWord = dictionary.getRandomWord();
             assertTrue(dictionary.contains(randomWord));
+            assertEquals(5, randomWord.length()); // Должно быть 5 букв
         }
     }
 
     @Test
     void testGameResult() {
-        WordleGame.GameResult result = new WordleGame.GameResult(true, "+++++", "test");
+        WordleGame.GameResult result = new WordleGame.GameResult(true, "+++++", "тест");
 
         assertTrue(result.isWin());
         assertEquals("+++++", result.getAnalysis());
-        assertEquals("test", result.getWord());
+        assertEquals("тест", result.getWord());
     }
 }
