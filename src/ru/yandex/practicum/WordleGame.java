@@ -16,7 +16,7 @@ public class WordleGame {
         this.dictionary = dictionary;
         this.answer = dictionary.getRandomWord();
         this.remainingSteps = 6;
-        
+
         for (int i = 0; i < 5; i++) {
             wrongPositions.put(i, new HashSet<>());
         }
@@ -28,11 +28,11 @@ public class WordleGame {
         }
 
         String normalizedWord = normalizeWord(word);
-        
+
         if (normalizedWord.length() != 5) {
             throw new WordleGameException("Слово должно содержать 5 букв");
         }
-        
+
         if (!dictionary.contains(normalizedWord)) {
             throw new WordNotFoundInDictionaryException("Слово не найдено в словаре: " + word);
         }
@@ -46,18 +46,18 @@ public class WordleGame {
 
         // Обновляем информацию о буквах
         updateLetterInfo(normalizedWord);
-        
+
         return new GameResult(false, WordleDictionary.analyzeWord(normalizedWord, answer), normalizedWord);
     }
 
     public String getHint() {
         List<String> possibleWords = dictionary.findPossibleWords(
             correctLetters, wrongLetters, correctPositions, wrongPositions);
-        
+
         if (possibleWords.isEmpty()) {
             return null;
         }
-        
+
         Random random = new Random();
         return possibleWords.get(random.nextInt(possibleWords.size()));
     }
@@ -84,11 +84,11 @@ public class WordleGame {
 
     private void updateLetterInfo(String word) {
         String analysis = WordleDictionary.analyzeWord(word, answer);
-        
+
         for (int i = 0; i < 5; i++) {
             char guessChar = word.charAt(i);
             char resultChar = analysis.charAt(i);
-            
+
             if (resultChar == '+') {
                 correctLetters.add(guessChar);
                 correctPositions.put(i, guessChar);
