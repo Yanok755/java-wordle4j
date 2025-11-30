@@ -63,10 +63,10 @@ public class Wordle {
                         break;
                     }
 
-                } catch (WordNotFoundInDictionaryException e) {
+                } catch (WordleGame.WordNotFoundInDictionaryException e) {
                     System.out.println("❌ " + e.getMessage());
                     logWriter.println("Пользователь ввел слово не из словаря: " + input);
-                } catch (WordleGameException e) {
+                } catch (WordleGame.WordleGameException e) {
                     System.out.println("❌ " + e.getMessage());
                     logWriter.println("Ошибка игры: " + e.getMessage());
                 }
