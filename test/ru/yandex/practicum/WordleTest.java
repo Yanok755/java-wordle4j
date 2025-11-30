@@ -86,7 +86,7 @@ class WordleTest {
     }
 
     @Test
-    void testSuccessfulAttempt() throws WordleGameException {
+    void testSuccessfulAttempt() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
         String answer = game.getAnswer();
 
@@ -99,7 +99,7 @@ class WordleTest {
     }
 
     @Test
-    void testFailedAttempt() throws WordleGameException {
+    void testFailedAttempt() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
         String answer = game.getAnswer();
         String wrongWord = "стул"; // гарантированно другое слово
@@ -119,20 +119,20 @@ class WordleTest {
     void testInvalidWordLength() {
         WordleGame game = new WordleGame(dictionary);
 
-        assertThrows(WordleGameException.class, () -> game.makeAttempt("короткое"));
-        assertThrows(WordleGameException.class, () -> game.makeAttempt("дл"));
+        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("короткое"));
+        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("дл"));
     }
 
     @Test
     void testWordNotInDictionary() {
         WordleGame game = new WordleGame(dictionary);
 
-        assertThrows(WordNotFoundInDictionaryException.class,
+        assertThrows(WordleGame.WordNotFoundInDictionaryException.class,
             () -> game.makeAttempt("абвгд")); // несуществующее слово
     }
 
     @Test
-    void testGameOverAfterSixAttempts() throws WordleGameException {
+    void testGameOverAfterSixAttempts() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
         String wrongWord = "стул";
 
@@ -148,11 +148,11 @@ class WordleTest {
         assertEquals(0, game.getRemainingSteps());
 
         // Нельзя сделать ход после окончания игры
-        assertThrows(WordleGameException.class, () -> game.makeAttempt("стол"));
+        assertThrows(WordleGame.WordleGameException.class, () -> game.makeAttempt("стол"));
     }
 
     @Test
-    void testHintSystem() throws WordleGameException {
+    void testHintSystem() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
 
         String hint = game.getHint();
@@ -166,7 +166,7 @@ class WordleTest {
     }
 
     @Test
-    void testLetterTracking() throws WordleGameException {
+    void testLetterTracking() throws WordleGame.WordleGameException {
         WordleGame game = new WordleGame(dictionary);
         String answer = game.getAnswer();
 
