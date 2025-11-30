@@ -81,14 +81,14 @@ public class WordleDictionary {
         return true;
     }
 
-    private String normalizeWord(String word) {
+    private static String normalizeWord(String word) {
         return word.toLowerCase().replace('ё', 'е');
     }
 
     public static String analyzeWord(String guess, String answer) {
         String normalizedGuess = normalizeWord(guess);
         String normalizedAnswer = normalizeWord(answer);
-    
+
         if (normalizedGuess.length() != 5 || normalizedAnswer.length() != 5) {
             throw new IllegalArgumentException("Слова должны быть длиной 5 букв");
         }
@@ -97,7 +97,7 @@ public class WordleDictionary {
         char[] guessChars = normalizedGuess.toCharArray();
         char[] answerChars = normalizedAnswer.toCharArray();
 
-    // Сначала отмечаем правильные позиции
+        // Сначала отмечаем правильные позиции
         for (int i = 0; i < 5; i++) {
             if (guessChars[i] == answerChars[i]) {
                 result[i] = '+';
@@ -105,7 +105,7 @@ public class WordleDictionary {
             }
         }
 
-    // Затем отмечаем буквы в неправильных позициях
+        // Затем отмечаем буквы в неправильных позициях
         for (int i = 0; i < 5; i++) {
             if (result[i] == '+') continue;
 
@@ -125,9 +125,5 @@ public class WordleDictionary {
         }
 
         return new String(result);
-    }
-
-    private static String normalizeWord(String word) {
-        return word.toLowerCase().replace('ё', 'е');
     }
 }
