@@ -128,4 +128,16 @@ public class WordleGame {
             return word;
         }
     }
+
+    public static class WordleGameException extends Exception {
+        public WordleGameException(String message) {
+            super(message);
+        }
+    }
+
+    public static class WordNotFoundInDictionaryException extends WordleGameException {
+        public WordNotFoundInDictionaryException(String message) {
+            super(message);
+        }
+    }
 }
