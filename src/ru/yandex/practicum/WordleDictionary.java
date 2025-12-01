@@ -102,33 +102,47 @@ public class WordleDictionary {
         }
 
         char[] result = new char[5];
-        char[] guessChars = normalizedGuess.toCharArray();
         char[] answerChars = normalizedAnswer.toCharArray();
-        boolean[] used = new boolean[5]; // Отслеживаем использованные буквы в ответе
+        boolean[] usedInAnswer = new boolean[5]; // Отслеживаем использованные буквы в ответе
 
-    // Сначала отмечаем правильные позиции (зеленые)
+    // Шаг 1: Сначала отмечаем все правильные позиции (зеленые '+')
         for (int i = 0; i < 5; i++) {
-            if (guessChars[i] == answerChars[i]) {
+            if (normalizedGuess.charAt(i) == answerChars[i]) {
                 result[i] = '+';
-                used[i] = true; // Помечаем букву как использованную
+                usedInAnswer[i] = true; // Помечаем эту позицию в ответе как использованную
             } else {
-                result[i] = '-'; // Временно ставим минус
+                result[i] = '-'; // Временно ставим '-'
             }
         }
 
-    // Затем отмечаем буквы в неправильных позициях (желтые)
+    // Шаг 2: Отмечаем буквы, которые есть в слове, но не на своих позициях (желтые '^')
         for (int i = 0; i < 5; i++) {
-            if (result[i] == '+') continue; // Уже обработали
+        // Если уже отметили как правильную позицию, пропускаем
+            if (result[i] == '+') {
+                continue;
+            }
 
-        // Ищем букву в ответе, которая еще не использована
+            char currentChar = normalizedGuess.charAt(i);
+            boolean found = false;
+
+        // Ищем эту букву в ответе на других позициях
             for (int j = 0; j < 5; j++) {
-                if (!used[j] && guessChars[i] == answerChars[j]) {
-                    result[i] = '^';
-                    used[j] = true; // Помечаем букву как использованную
-                    break;
+            // Если позиция в ответе еще не использована и буква совпадает
+                if (!usedInAnswer[j] && answerChars[j] == currentChar) {
+                // Проверяем, что это не та же самая позиция (уже обработана в шаге 1)
+                    if (j != i) {
+                        result[i] = '^';
+                        usedInAnswer[j] = true; // Помечаем эту позицию в ответе как использованную
+                        found = true;
+                        break;
+                    }
                 }
             }
-        // Если не нашли подходящую букву, оставляем '-'
+
+        // Если не нашли букву в ответе, оставляем '-'
+            if (!found) {
+                result[i] = '-';
+            }
         }
 
         return new String(result);
