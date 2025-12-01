@@ -83,7 +83,7 @@ class WordleTest {
     
     // Первая буква правильная, остальные нет
         String result1 = WordleDictionary.analyzeWord("стуль", "столи");
-        assertEquals("+----", result1, "Для 'стуль' vs 'столи' ожидается '+----', но получено: " + result1);
+        assertEquals("++-+-", result1, "Для 'стуль' vs 'столи' ожидается '+----', но получено: " + result1);
     
     // Буквы в неправильных позициях
         String result2 = WordleDictionary.analyzeWord("слони", "столи");
