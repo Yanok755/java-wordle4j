@@ -78,14 +78,23 @@ class WordleTest {
 
     @Test
     void testWordAnalysis() {
-        // Правильные позиции
+    // Правильные позиции
         assertEquals("+++++", WordleDictionary.analyzeWord("столи", "столи"));
+    
+    // Первая буква правильная, остальные нет
         assertEquals("+----", WordleDictionary.analyzeWord("стуль", "столи"));
-        
-        // Буквы в неправильных позициях
-        String analysis = WordleDictionary.analyzeWord("слони", "столи");
-        assertEquals(5, analysis.length());
-        assertEquals("+^---", analysis);
+    
+    // Буквы в неправильных позициях
+        assertEquals("+^---", WordleDictionary.analyzeWord("слони", "столи")); // 'о' есть в слове, но не на этой позиции
+    
+    // Тест с повторяющимися буквами
+        assertEquals("+++--", WordleDictionary.analyzeWord("столл", "столи"));
+    
+    // Все буквы неправильные
+        assertEquals("-----", WordleDictionary.analyzeWord("абвгд", "столи"));
+    
+    // Несколько букв в неправильных позициях
+        assertEquals("^^---", WordleDictionary.analyzeWord("толис", "столи"));
     }
 
     @Test
