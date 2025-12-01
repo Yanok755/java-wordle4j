@@ -87,7 +87,7 @@ class WordleTest {
     
     // Буквы в неправильных позициях
         String result2 = WordleDictionary.analyzeWord("слони", "столи");
-        assertEquals("+^---", result2, "Для 'слони' vs 'столи' ожидается '+^---', но получено: " + result2);
+        assertEquals("+^---", result2, "Для 'слони' vs 'столи' ожидается '+^+-+', но получено: " + result2);
     
     // Все буквы неправильные
         assertEquals("-----", WordleDictionary.analyzeWord("абвгд", "столи"));
