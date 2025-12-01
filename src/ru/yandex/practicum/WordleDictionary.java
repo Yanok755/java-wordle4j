@@ -104,32 +104,31 @@ public class WordleDictionary {
         char[] result = new char[5];
         char[] guessChars = normalizedGuess.toCharArray();
         char[] answerChars = normalizedAnswer.toCharArray();
+        boolean[] used = new boolean[5]; // Отслеживаем использованные буквы в ответе
 
-        // Сначала отмечаем правильные позиции
+    // Сначала отмечаем правильные позиции (зеленые)
         for (int i = 0; i < 5; i++) {
             if (guessChars[i] == answerChars[i]) {
                 result[i] = '+';
-                answerChars[i] = ' '; // Помечаем как использованную
+                used[i] = true; // Помечаем букву как использованную
+            } else {
+                result[i] = '-'; // Временно ставим минус
             }
         }
 
-        // Затем отмечаем буквы в неправильных позициях
+    // Затем отмечаем буквы в неправильных позициях (желтые)
         for (int i = 0; i < 5; i++) {
-            if (result[i] == '+') continue;
+            if (result[i] == '+') continue; // Уже обработали
 
-            boolean found = false;
+        // Ищем букву в ответе, которая еще не использована
             for (int j = 0; j < 5; j++) {
-                if (answerChars[j] == guessChars[i]) {
+                if (!used[j] && guessChars[i] == answerChars[j]) {
                     result[i] = '^';
-                    answerChars[j] = ' ';
-                    found = true;
+                    used[j] = true; // Помечаем букву как использованную
                     break;
                 }
             }
-
-            if (!found) {
-                result[i] = '-';
-            }
+        // Если не нашли подходящую букву, оставляем '-'
         }
 
         return new String(result);
